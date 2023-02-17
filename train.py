@@ -34,19 +34,21 @@ model=UNetLightning(in_channels=3, out_channels=1, lr=1e-3, batch_size=8)
 checkpoint_callback = ModelCheckpoint(
     monitor='valid_per_image_iou',
     dirpath='checkpoints/',
-    filename='unet-{epoch:02d}-{val_loss:.2f}',
+    filename='unet-{epoch:02d}-{valid_per_image_iou:.2f}',
     save_top_k=3,
-    mode='min',
+    mode='max',
 )
 
 early_stop_callback = EarlyStopping(
     monitor='valid_per_image_iou',
-    min_delta=0.00,
-    patience=3,
+    min_delta=0.0,
+    patience=10,
     verbose=False,
     mode='min'
 )
 
-trainer = Trainer(accelerator='auto', max_epochs=10, callbacks=[checkpoint_callback, early_stop_callback])
+trainer = Trainer(accelerator='auto', max_epochs=500, callbacks=[checkpoint_callback])
 
 trainer.fit(model)
+
+trainer.test(model)

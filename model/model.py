@@ -96,14 +96,14 @@ class UNetLightning(pl.LightningModule):
 
     def prepare_data(self):
         # get all file names
-        all_files = glob.glob('/Users/abdu/Desktop/PhD Files/Spring Semester/Machine Learning/Project/semantic_segmentation/Kvasir-SEG/train/images/*.jpg')
-        root_dir = "/Users/abdu/Desktop/PhD Files/Spring Semester/Machine Learning/Project/semantic_segmentation/Kvasir-SEG/train/"
+        all_files = glob.glob('Kvasir-SEG/images/*.jpg')
+        root_dir = "Kvasir-SEG/"
         # keep the file names only
         all_files = [file.split('/')[-1] for file in all_files]
 
         # split the data into train, validation, and test
         train_files, val_files = train_test_split(all_files, test_size=0.2, random_state=42)
-        val_files, test_files = train_test_split(val_files, test_size=0.2, random_state=42)
+        val_files, test_files = train_test_split(train_files, test_size=0.2, random_state=42)
         # Define augmentation pipeline
         train_transform = A.Compose([
                     A.Resize(256, 256),
@@ -123,7 +123,6 @@ class UNetLightning(pl.LightningModule):
                     A.Resize(256, 256),
 
             ])
-
         # Create dataset    
         self.train_dataset = KvasirSEGDataset(root_dir,train_files, transform=train_transform)
         self.val_dataset = KvasirSEGDataset(root_dir,val_files, transform=val_transform)
